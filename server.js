@@ -6,7 +6,7 @@ const https = require('https');
 // Ambil dari .env
 const PORT = process.env.PORT || 3000;
 const ID = process.env.ID || 'defaultid';
-const GATEWAY = process.env.GATEWAY || 'http://s.apipedia.id';
+const GATEWAY = process.env.GATEWAY || 'https://s.apipedia.id';
 
 function getTunnelPassword(callback) {
   https.get('https://loca.lt/mytunnelpassword', (res) => {
