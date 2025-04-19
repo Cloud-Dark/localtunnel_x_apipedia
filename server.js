@@ -1,19 +1,41 @@
-require('dotenv').config(); // Load .env
-
+require('dotenv').config();
 const localtunnel = require('localtunnel');
 const { exec } = require('child_process');
+const https = require('https');
 
 // Ambil dari .env
 const PORT = process.env.PORT || 3000;
 const ID = process.env.ID || 'defaultid';
-const GATEWAY = process.env.GATEWAY || 'http://s.apipedia.id'; // optional kalau mau fleksibel
+const GATEWAY = process.env.GATEWAY || 'http://s.apipedia.id';
+
+function getTunnelPassword(callback) {
+  https.get('https://loca.lt/mytunnelpassword', (res) => {
+    let data = '';
+    res.on('data', chunk => (data += chunk));
+    res.on('end', () => {
+      callback(data.trim());
+    });
+  }).on('error', (err) => {
+    console.error('❌ Gagal mengambil tunnel password:', err.message);
+    callback(null);
+  });
+}
 
 (async () => {
   try {
     const tunnel = await localtunnel({ port: PORT });
-
     const publicUrl = tunnel.url;
     console.log(`✅ LocalTunnel URL: ${publicUrl}`);
+
+    // Ambil password-nya
+    getTunnelPassword((password) => {
+      if (password) {
+        console.log(`🔑 Tunnel password (bagi ke pengguna): ${password}`);
+        console.log(`📌 Kunjungi di browser akan diminta password ini: ${password}`);
+      } else {
+        console.log('⚠️ Tidak bisa mendapatkan tunnel password.');
+      }
+    });
 
     const gatewayUrl = `${GATEWAY}?id=${ID}&url=${encodeURIComponent(publicUrl)}`;
     console.log(`🌐 Registering to gateway: ${gatewayUrl}`);
