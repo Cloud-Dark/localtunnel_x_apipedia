@@ -91,5 +91,3 @@ git pull origin main
 ## 📄 Lisensi
 
 MIT © 2025 [Cloud-Dark](https://github.com/Cloud-Dark)
-
-```
